@@ -243,6 +243,23 @@ exports.indentationOnNewLine = true;
 exports.logconfig = { appenders: [{ type: "console" }]};
 
 /*
+ * log4js configuration
+ */
+exports.log4js_configuration = {
+    appenders: {
+        console: {
+            type: "console"
+        }
+    },
+    categories: {
+        default: {
+          appenders: ["console"],
+          level: "info"
+        }
+    }
+};
+
+/*
  * Session Key, do not sure this.
  */
 exports.sessionKey = false;
@@ -620,8 +637,7 @@ exports.reloadSettings = function reloadSettings() {
   storeSettings(settings);
   storeSettings(credentials);
 
-  log4js.configure(exports.logconfig);//Configure the logging appenders
-  log4js.setGlobalLogLevel(exports.loglevel);//set loglevel
+  log4js.configure(exports.log4js_configuration);//Configure the logging appenders
   process.env['DEBUG'] = 'socket.io:' + exports.loglevel; // Used by SocketIO for Debug
   log4js.replaceConsole();
 
