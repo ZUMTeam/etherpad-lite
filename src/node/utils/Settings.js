@@ -640,7 +640,7 @@ exports.reloadSettings = function reloadSettings() {
   storeSettings(credentials);
 
   log4js.configure(exports.log4js_configuration);//Configure the logging appenders
-  process.env['DEBUG'] = 'socket.io:' + exports.loglevel; // Used by SocketIO for Debug
+  process.env['DEBUG'] = 'socket.io:' + log4js.getLogger('socket.io').level; // Used by SocketIO for Debug
 
   const consoleLogger = log4js.getLogger('console');
   // rudimentary replacement for simple comsole logging calls
