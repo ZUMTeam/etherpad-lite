@@ -641,7 +641,10 @@ exports.reloadSettings = function reloadSettings() {
 
   log4js.configure(exports.log4js_configuration);//Configure the logging appenders
   process.env['DEBUG'] = 'socket.io:' + exports.loglevel; // Used by SocketIO for Debug
-  log4js.replaceConsole();
+
+  const consoleLogger = log4js.getLogger('console');
+  // rudimentary replacement for simple comsole logging calls
+  ['debug', 'error', 'info', 'log', 'trace', 'warn'].forEach(l => console[l] = consoleLogger[l === 'log' ? 'info' : l].bind(consoleLogger));
 
   if (exports.loglevel) {
     log4js.getLogger('config').warn("ignoring setting `logLevel`; logging configuration is done using `log4js_configuration`");

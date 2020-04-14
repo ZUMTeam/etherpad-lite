@@ -25,8 +25,6 @@ var log4js = require('log4js')
   , NodeVersion = require('./utils/NodeVersion')
   ;
 
-log4js.replaceConsole();
-
 /*
  * early check for version compatibility before calling
  * any modules that require newer versions of NodeJS
