@@ -214,8 +214,9 @@ exports.allowUnknownFileEnds = true;
 
 /**
  * The log level of log4js
+ * @Deprecated
  */
-exports.loglevel = "INFO";
+exports.loglevel = null;
 
 /**
  * Disable IP logging
@@ -239,8 +240,9 @@ exports.indentationOnNewLine = true;
 
 /*
  * log4js appender configuration
+ * @Deprecated
  */
-exports.logconfig = { appenders: [{ type: "console" }]};
+exports.logconfig = null;
 
 /*
  * log4js configuration
@@ -640,6 +642,13 @@ exports.reloadSettings = function reloadSettings() {
   log4js.configure(exports.log4js_configuration);//Configure the logging appenders
   process.env['DEBUG'] = 'socket.io:' + exports.loglevel; // Used by SocketIO for Debug
   log4js.replaceConsole();
+
+  if (exports.loglevel) {
+    log4js.getLogger('config').warn("ignoring setting `logLevel`; logging configuration is done using `log4js_configuration`");
+  }
+  if (exports.logconfig) {
+    log4js.getLogger('config').warn("ignoring setting `logconfig`; logging configuration is done using `log4js_configuration`");
+  }
 
   if (!exports.skinName) {
     console.warn(`No "skinName" parameter found. Please check out settings.json.template and update your settings.json. Falling back to the default "no-skin".`);
