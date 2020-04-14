@@ -464,63 +464,70 @@
    * Do not enable on production machines.
    */
   "exposeVersion": false,
-
-  /*
-   * The log level we are using.
-   *
-   * Valid values: DEBUG, INFO, WARN, ERROR
-   */
-  "loglevel": "${LOGLEVEL:INFO}",
-
   /*
    * Logging configuration. See log4js documentation for further information:
    * https://github.com/nomiddlename/log4js-node
    *
    * You can add as many appenders as you want here.
    */
-  "logconfig" :
-    { "appenders": [
-        { "type": "console"
-        //, "category": "access"// only logs pad access
-        }
-
+  "log4js_configuration": {
+    "appenders": {
+      "console": { "type": "console" }
       /*
-      , { "type": "file"
-      , "filename": "your-log-file-here.log"
-      , "maxLogSize": 1024
-      , "backups": 3 // how many log files there're gonna be at max
-      //, "category": "test" // only log a specific category
-        }
+      ,
+      "file": {
+        "type": "file",
+        "filename":"your-log-file-here.log",
+        "maxLogSize": 1024,
+        "backups": 3 // how many log files there're gonna be at max
+      }
       */
 
       /*
-      , { "type": "logLevelFilter"
-        , "level": "warn" // filters out all log messages that have a lower level than "error"
-        , "appender":
-          {  Use whatever appender you want here  }
-        }
+      ,
+      "warn_extra": {
+        "type": "logLevelFilter",
+        "level": "warn",
+        "appender": < name of final appender here >
+      }
       */
 
       /*
-      , { "type": "logLevelFilter"
-        , "level": "error" // filters out all log messages that have a lower level than "error"
-        , "appender":
-          { "type": "smtp"
-          , "subject": "An error occurred in your EPL instance!"
-          , "recipients": "bar@blurdybloop.com, baz@blurdybloop.com"
-          , "sendInterval": 300 // 60 * 5 = 5 minutes -- will buffer log messages; set to 0 to send a mail for every message
-          , "transport": "SMTP", "SMTP": { // see https://github.com/andris9/Nodemailer#possible-transport-methods
-              "host": "smtp.example.com", "port": 465,
-              "secureConnection": true,
-              "auth": {
-                  "user": "foo@example.com",
-                  "pass": "bar_foo"
-              }
+      ,
+      // requires dependency npm install @log4js-node/smtp
+      "email_for_errors": {
+        "type": "@log4js-node/smtp",
+        "recipients": "bar@blurdybloop.com, baz@blurdybloop.com",
+        "subject": "An error occured in your EPL instance!",
+        "sendInterval": 300, // 60 * 5 = 5 minutes -- will buffer log messages; set to 0 to send mail for every message
+        "transport": {
+          "plugin": "smtp",
+          "options": { // nodemailer options
+            "host": "smtp.example.com",
+            "port": 465,
+            "secure": true,
+            "auth": {
+              "type": "login",
+              "user": "foo@example.com",
+              "pass": "bar_foo"
             }
           }
         }
+      }
+      ,
+      "email_error": {
+        "type": "logLevelFilter",
+        "level": "error",
+        "appender":"email_for_errors"
+      }
+    },
+    "categories": {
+      "default": { "level: "${LOGLEVEL:info}", "appenders: [ "console" /*, "file" */ /*, "warn_extra" */ /*, "email_error" */ ] }
+      /*
+      ,
+      // category specific log configuration
+      "test": { "level": "trace", "appenders": [ "console" ] } 
       */
-
-      ]
-    } // logconfig
+    }
+  } // log4js_configuration
 }
